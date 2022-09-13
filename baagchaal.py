@@ -27,6 +27,7 @@ class Game:
 
 		pygame.display.set_caption("Baag Chaal")
 		self.positions()
+		self.free_pos=[self.p_a,self.p_c,self.p_e,self.p_g,self.p_i,self.p_k,self.p_m,self.p_o,self.p_g,self.p_s,self.p_u,self.p_w,self.p_y]
 		self.board()
 		self.playing()
 		pygame.quit()
@@ -185,17 +186,16 @@ class Game:
 				if not self.goat_is_static:
 					self.temp_pos=_where
 			return
-		'''
-		if self.which_checkers_turn or ((not self.which_checkers_turn) and (not self.goat_is_static)):	
-			if not self.game_rules(self.temp_pos,_where):
-				return
-		'''
+
 		if self.which_checkers_turn:# tiger
 			if self.temp_pos==None:
 				print(f"tiger not selected")
 				return
 			if not self.game_rules(self.temp_pos,_where):
 				print(f"Too far")
+				return
+			if not self.no_line_rule(self.temp_pos,_where):
+				print(f"No line rule")
 				return
 			self.which_checkers_turn=False
 			self.store_pos("tiger",self.temp_pos,_where)
@@ -208,9 +208,10 @@ class Game:
 			if not self.game_rules(self.temp_pos,_where):
 				print(f"too far")
 				return
+			if not self.no_line_rule(self.temp_pos,_where):
+				return
 			self.which_checkers_turn=True
 			self.store_pos("goat",self.temp_pos,_where)
-			#self.draw_goat(_where)
 		else:
 			print(f"BAD OUTCOME")
 
@@ -243,7 +244,23 @@ class Game:
 		return True
 
 	def no_line_rule(self,_prev,_new):# stops pieces without lines
-		return
+		if not _prev in self.free_pos:
+			print(f"restricted position")
+			_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
+			if _diff[0]<0:# changes negative to positive int
+				_diff[0]=int(str(_diff[0])[1:])
+			if _diff[1]<0:
+				_diff[1]=int(str(_diff[1])[1:])
+
+			if _diff[0]==0 and _diff[1]!=0:
+				return True
+			elif _diff[1]==0 and _diff[0]!=0:
+				return True
+			else:
+				return False
+		else:
+			print(f"Free position")
+			return True
 
 	def game_rules(self,_prev,_new):# the rules of the game
 		_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
@@ -275,8 +292,6 @@ class Game:
 		while self.running:
 			for event in pygame.event.get():
 				pygame.display.update()
-				#print(f"event = {event}
-				
 				if event.type==pygame.QUIT:
 					self.running=False
 					return
