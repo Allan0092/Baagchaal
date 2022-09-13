@@ -24,6 +24,7 @@ class Game:
 		self.radius=self.xaxis/30
 		self.border=((0,0),(self.xaxis,self.y//4))
 		self.border2=((0,self.yaxis-(self.y//4)),((self.xaxis,self.yaxis-(self.y//4))))
+		self.goat_victim=None
 
 		pygame.display.set_caption("Baag Chaal")
 		self.positions()
@@ -240,7 +241,6 @@ class Game:
 			print(f'move not valid, changing selected tiger')
 			self.temp_pos=_where
 			return False
-
 		return True
 
 	def no_line_rule(self,_prev,_new):# stops pieces without lines
@@ -279,12 +279,30 @@ class Game:
 		else:
 			return True
 		
+	def tiger_eats(self,_prev,_new):
+		mid_point=(_prev+_new)//2
+		if mid_point in self.goat_pos:
+			print("TIGER ATTACK!!")
+			self.goat_victim=mid_point
+			return True
+		else:
+			print("False Alarm, Tiger got nothing")
+			return False
+
+	def goat_attacked(self):
+		print("Goat corpse taken care of")
+		self.goat_pos.pop(self.goat_pos.index(self.goat_victim))
+		self.draw_blank(self.goat_victim)
+		self.goat_victim=None
+
+	def goat_wins(self):
+		return
 
 	def game_is_over(self):
 		if not self.goat_is_static and len(self.goat_pos)<=15:
 			print(f"tiger has won")
 			pygame.time.delay(700)
-			textsurface = pygame.font.SysFont('Ariel', 40, True).render('GAME OVER', False, self.white)
+			textsurface = pygame.font.SysFont('Ariel', 40, True).render('TIGER WINS', False, self.white)
 			self.screen.fill(self.black)
 			self.screen.blit(textsurface, (self.p_l, self.p_n))
 
