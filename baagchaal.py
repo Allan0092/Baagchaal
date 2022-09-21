@@ -25,6 +25,7 @@ class Game:
 		self.border=((0,0),(self.xaxis,self.y//4))
 		self.border2=((0,self.yaxis-(self.y//4)),((self.xaxis,self.yaxis-(self.y//4))))
 		self.goat_victim=None
+		self.goat_death_count=0
 
 		pygame.display.set_caption("Baag Chaal")
 		self.positions()
@@ -313,12 +314,13 @@ class Game:
 		self.goat_pos.pop(self.goat_pos.index(self.goat_victim))
 		self.draw_blank(self.goat_victim)
 		self.goat_victim=None
+		self.goat_death_count+=1
 
 	def goat_wins(self):
 		return
 
 	def game_is_over(self):
-		if not self.goat_is_static and len(self.goat_pos)<=15:
+		if (not self.goat_is_static and len(self.goat_pos)<=15) or self.goat_death_count>=5 :
 			print(f"tiger has won")
 			pygame.time.delay(700)
 			textsurface = pygame.font.SysFont('Ariel', 40, True).render('TIGER WINS', False, self.white)
