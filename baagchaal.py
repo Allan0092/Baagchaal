@@ -28,7 +28,7 @@ class Game:
 
 		pygame.display.set_caption("Baag Chaal")
 		self.positions()
-		self.free_pos=[self.p_a,self.p_c,self.p_e,self.p_g,self.p_i,self.p_k,self.p_m,self.p_o,self.p_g,self.p_s,self.p_u,self.p_w,self.p_y]
+		self.free_pos=[self.p_a,self.p_c,self.p_e,self.p_g,self.p_i,self.p_k,self.p_m,self.p_o,self.p_q,self.p_s,self.p_u,self.p_w,self.p_y]
 		self.board()
 		self.playing()
 		pygame.quit()
@@ -183,21 +183,29 @@ class Game:
 			return
 		if _where in self.goat_pos:
 			print(f"Area occupied by goat")
-			if not self.which_checkers_turn:
-				if not self.goat_is_static:
-					self.temp_pos=_where
+			if not self.which_checkers_turn and not self.goat_is_static:
+				self.temp_pos=_where
 			return
 
-		if self.which_checkers_turn:# tiger
+		if self.which_checkers_turn:# tiger's turn
 			if self.temp_pos==None:
 				print(f"tiger not selected")
 				return
-			if not self.game_rules(self.temp_pos,_where):
-				print(f"Too far")
-				return
+
 			if not self.no_line_rule(self.temp_pos,_where):
 				print(f"No line rule")
 				return
+
+			if not self.game_rules(self.temp_pos,_where):
+				print(f"Too far")
+				if self.tiger_eats(self.temp_pos,_where):
+					self.goat_attacked()
+					self.store_pos("tiger",self.temp_pos,_where)
+					self.which_checkers_turn=False
+					return
+				else:
+					return
+
 			self.which_checkers_turn=False
 			self.store_pos("tiger",self.temp_pos,_where)
 
@@ -235,7 +243,7 @@ class Game:
 
 	def move_is_valid(self,_where):# checks the validity of the  move
 		if _where in self.goat_pos and self.goat_is_static:
-			print(f"move not valid ")
+			print(f"move not valid, Goat can't be moved")
 			return False
 		if self.temp_pos!=None and _where in self.tiger_pos:
 			print(f'move not valid, changing selected tiger')
@@ -280,7 +288,18 @@ class Game:
 			return True
 		
 	def tiger_eats(self,_prev,_new):
-		mid_point=(_prev+_new)//2
+		_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
+		if _diff[0]<0:# changes negative to positive int
+			_diff[0]=int(str(_diff[0])[1:])
+		if _diff[1]<0:
+			_diff[1]=int(str(_diff[1])[1:])
+		
+		if _diff[0]>self.x*2 or _diff[1]>self.y*2:
+			print("Tiger stetching out it's paws")
+			return False
+
+
+		mid_point=[(_prev[0]+_new[0])//2,(_prev[1]+_new[1])//2]
 		if mid_point in self.goat_pos:
 			print("TIGER ATTACK!!")
 			self.goat_victim=mid_point
