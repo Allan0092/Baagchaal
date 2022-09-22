@@ -26,6 +26,7 @@ class Game:
 		self.border2=((0,self.yaxis-(self.y//4)),((self.xaxis,self.yaxis-(self.y//4))))
 		self.goat_victim=None
 		self.goat_death_count=0
+		self.cant_play_again=False
 
 		pygame.display.set_caption("Baag Chaal")
 		self.positions()
@@ -346,6 +347,11 @@ class Game:
 
 		return False
 
+	def play_again(self):
+		if self.cant_play_again:
+			return False
+		return True
+
 	def playing(self):# actual game running
 		wait_before_quit=False
 		while self.running:
@@ -353,6 +359,7 @@ class Game:
 				pygame.display.update()
 				if event.type==pygame.QUIT:
 					self.running=False
+					self.cant_play_again=True
 					return
 				if event.type==pygame.MOUSEBUTTONUP and wait_before_quit:
 					self.running=False
@@ -364,4 +371,7 @@ class Game:
 						wait_before_quit=True
 						
 if __name__=="__main__":
-	Game()
+	play_again=True
+	while play_again:
+		game=Game()
+		play_again=game.play_again()
