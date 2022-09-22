@@ -278,15 +278,11 @@ class Game:
 
 	def game_rules(self,_prev,_new):# the rules of the game
 		_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
-		
-		print(f"_prev={_prev}\n_new={_new}")
 
 		if _diff[0]<0:# changes negative to positive int
 			_diff[0]=int(str(_diff[0])[1:])
 		if _diff[1]<0:
 			_diff[1]=int(str(_diff[1])[1:])
-		
-		print(f"_diff{_diff}")
 
 		if _diff[0]>self.x or _diff[1]>self.y:
 			return False
@@ -314,7 +310,7 @@ class Game:
 			print("False Alarm, Tiger got nothing")
 			return False
 
-	def goat_attacked(self):
+	def goat_attacked(self):# deletes goat when eaten
 		print("Goat corpse taken care of")
 		self.goat_pos.pop(self.goat_pos.index(self.goat_victim))
 		self.draw_blank(self.goat_victim)
@@ -322,9 +318,12 @@ class Game:
 		self.goat_death_count+=1
 
 	def goat_wins(self):
-		return
+		if len(self.goat_pos)<17:
+			return False
+		for _tigers in self.tiger_pos:
+			pass
 
-	def final_screen(self):
+	def final_screen(self):# after game_over, shows the final positions 
 		for _goats in self.goat_pos:
 			self.draw_goat(_goats)
 		for _tigers in self.tiger_pos:
@@ -332,15 +331,19 @@ class Game:
 		pygame.draw.rect(self.screen,self.red,self.border)
 		pygame.draw.rect(self.screen,self.red,self.border2)
 
-	def game_is_over(self):
+	def game_is_over(self):# checks if game is over
 		if (not self.goat_is_static and len(self.goat_pos)<=15) or self.goat_death_count>=5 :
 			print(f"tiger has won")
-			pygame.time.delay(700)
 			# textsurface = pygame.font.SysFont('Ariel', 40, True).render('TIGER WINS', False, self.white)
 			# self.screen.fill(self.black)
 			# self.screen.blit(textsurface, (self.p_l, self.p_n))
 			self.board(self.red)
 			return True
+		elif self.goat_wins():
+			print("goat wins")
+			self.board(self.blue)
+			return True
+
 		return False
 
 	def playing(self):# actual game running
