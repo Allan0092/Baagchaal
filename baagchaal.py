@@ -30,7 +30,7 @@ class Game:
 		pygame.display.set_caption("Baag Chaal")
 		self.positions()
 		self.free_pos=[self.p_a,self.p_c,self.p_e,self.p_g,self.p_i,self.p_k,self.p_m,self.p_o,self.p_q,self.p_s,self.p_u,self.p_w,self.p_y]
-		self.board()
+		self.board(self.white)
 		self.playing()
 		pygame.quit()
 
@@ -138,37 +138,42 @@ class Game:
 			self.goat_pos.append(_new)
 		self.temp_pos=None # also called _prev
 
-	def board(self):# creates board
+	def board(self,_color):# creates board
 		self.screen=pygame.display.set_mode(size=(self.xaxis,self.yaxis))
 		self.screen.fill(self.black)
-		pygame.draw.line(self.screen,self.white,(self.x,self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.x,self.y),(self.xaxis-self.x,self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.x,self.y),(self.x,self.yaxis-self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.xaxis-self.x,self.y),(self.x,self.yaxis-self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.xaxis-self.x,self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.x,self.yaxis-self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.xaxis/2,self.y),(self.xaxis/2,self.yaxis-self.y),4)
-		pygame.draw.line(self.screen,self.white,(self.x,self.yaxis/2),(self.xaxis-self.x,self.yaxis/2),4)
+		pygame.draw.line(self.screen,_color,(self.x,self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
+		pygame.draw.line(self.screen,_color,(self.x,self.y),(self.xaxis-self.x,self.y),4)
+		pygame.draw.line(self.screen,_color,(self.x,self.y),(self.x,self.yaxis-self.y),4)
+		pygame.draw.line(self.screen,_color,(self.xaxis-self.x,self.y),(self.x,self.yaxis-self.y),4)
+		pygame.draw.line(self.screen,_color,(self.xaxis-self.x,self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
+		pygame.draw.line(self.screen,_color,(self.x,self.yaxis-self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
+		pygame.draw.line(self.screen,_color,(self.xaxis/2,self.y),(self.xaxis/2,self.yaxis-self.y),4)
+		pygame.draw.line(self.screen,_color,(self.x,self.yaxis/2),(self.xaxis-self.x,self.yaxis/2),4)
 
-		pygame.draw.line(self.screen,self.white,(self.x*2,self.y),(self.x*2,self.yaxis-self.y),2)
-		pygame.draw.line(self.screen,self.white,(self.x*4,self.y),(self.x*4,self.yaxis-self.y),2)
-		pygame.draw.line(self.screen,self.white,(self.x,self.y*2),(self.xaxis-self.x,self.y*2),2)
-		pygame.draw.line(self.screen,self.white,(self.x,self.y*4),(self.xaxis-self.x,self.y*4),2)
+		pygame.draw.line(self.screen,_color,(self.x*2,self.y),(self.x*2,self.yaxis-self.y),2)
+		pygame.draw.line(self.screen,_color,(self.x*4,self.y),(self.x*4,self.yaxis-self.y),2)
+		pygame.draw.line(self.screen,_color,(self.x,self.y*2),(self.xaxis-self.x,self.y*2),2)
+		pygame.draw.line(self.screen,_color,(self.x,self.y*4),(self.xaxis-self.x,self.y*4),2)
 
-		pygame.draw.line(self.screen,self.white,(self.x*3,self.y),(self.x,self.y*3),2)
-		pygame.draw.line(self.screen,self.white,(self.x*3,self.y*5),(self.x,self.y*3),2)
-		pygame.draw.line(self.screen,self.white,(self.x*3,self.y*5),(self.x*5,self.y*3),2)
-		pygame.draw.line(self.screen,self.white,(self.x*3,self.y),(self.x*5,self.y*3),2)
+		pygame.draw.line(self.screen,_color,(self.x*3,self.y),(self.x,self.y*3),2)
+		pygame.draw.line(self.screen,_color,(self.x*3,self.y*5),(self.x,self.y*3),2)
+		pygame.draw.line(self.screen,_color,(self.x*3,self.y*5),(self.x*5,self.y*3),2)
+		pygame.draw.line(self.screen,_color,(self.x*3,self.y),(self.x*5,self.y*3),2)
 		
 		pygame.draw.rect(self.screen,self.blue,self.border)
 		pygame.draw.rect(self.screen,self.blue,self.border2)
 
 		# draws blank holes on board
+		
 		for _where in [self.p_a,self.p_b,self.p_c,self.p_d,self.p_e,self.p_f,self.p_g,self.p_h,self.p_i,self.p_j,self.p_k,self.p_l,self.p_m,self.p_n,self.p_o,self.p_p,self.p_q,self.p_r,self.p_s,self.p_t,self.p_u,self.p_v,self.p_w,self.p_x,self.p_y]:
 			self.draw_blank(_where)
 
 		pygame.display.flip()
-		self.init_pos()
+		if _color ==self.white:
+			self.init_pos()
+		else:
+			self.final_screen()
+			pygame.display.update()
 
 	def turns(self,pos):# manage turns
 		_where=self.which_clicked(pos)
@@ -319,26 +324,41 @@ class Game:
 	def goat_wins(self):
 		return
 
+	def final_screen(self):
+		for _goats in self.goat_pos:
+			self.draw_goat(_goats)
+		for _tigers in self.tiger_pos:
+			self.draw_tiger(_tigers)
+		pygame.draw.rect(self.screen,self.red,self.border)
+		pygame.draw.rect(self.screen,self.red,self.border2)
+
 	def game_is_over(self):
 		if (not self.goat_is_static and len(self.goat_pos)<=15) or self.goat_death_count>=5 :
 			print(f"tiger has won")
 			pygame.time.delay(700)
-			textsurface = pygame.font.SysFont('Ariel', 40, True).render('TIGER WINS', False, self.white)
-			self.screen.fill(self.black)
-			self.screen.blit(textsurface, (self.p_l, self.p_n))
+			# textsurface = pygame.font.SysFont('Ariel', 40, True).render('TIGER WINS', False, self.white)
+			# self.screen.fill(self.black)
+			# self.screen.blit(textsurface, (self.p_l, self.p_n))
+			self.board(self.red)
+			return True
+		return False
 
 	def playing(self):# actual game running
+		wait_before_quit=False
 		while self.running:
 			for event in pygame.event.get():
 				pygame.display.update()
 				if event.type==pygame.QUIT:
 					self.running=False
 					return
+				if event.type==pygame.MOUSEBUTTONUP and wait_before_quit:
+					self.running=False
+					return
 				if event.type==pygame.MOUSEBUTTONUP:
 					pos=pygame.mouse.get_pos()
 					self.turns(pos)
-					self.game_is_over()
-
-
+					if self.game_is_over():
+						wait_before_quit=True
+						
 if __name__=="__main__":
 	Game()
