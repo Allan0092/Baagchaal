@@ -17,8 +17,8 @@ class Game:
 		self.red=(255,20,50)
 		self.blue=(0,0,255)
 
-		self.xaxis=1200
-		self.yaxis=1200
+		self.xaxis=1000
+		self.yaxis=800
 		self.x=self.xaxis//6
 		self.y=self.yaxis//6
 		self.radius=self.xaxis/30
