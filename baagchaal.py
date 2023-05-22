@@ -199,7 +199,9 @@ class Game:
 
 	def turns(self,pos):
 		"""
-			Manage turns of pieces
+			Manage turns of pieces.
+			Arguments:
+				pos:
 		"""
 		_where=self.which_clicked(pos)
 		if _where == None:
@@ -419,7 +421,7 @@ class Game:
 		"""
 			Checks if user clicked play_again.
 		"""
-		return self.cant_play_again
+		return not self.cant_play_again 
 
 
 	def playing(self):
