@@ -35,7 +35,10 @@ class Game:
 		self.playing()
 		pygame.quit()
 
-	def positions(self):# all positions in alphabet
+	def positions(self):
+		"""
+			Define all positions of the board where pieces can be placed.
+		"""
 		self.p_a=[self.x,self.y]
 		self.p_b=[self.x*2,self.y]
 		self.p_c=[self.x*3,self.y]
@@ -66,8 +69,12 @@ class Game:
 		self.p_x=[self.x*4,self.y*5]
 		self.p_y=[self.x*5,self.y*5]
 
-	def which_clicked(self,pos):# shows which area's been clicked
-		
+	def which_clicked(self,pos):
+		"""
+			Shows which area in the board has been clicked.
+			Argument:
+				pos : coordinates of the clicked area.
+		"""
 		if ((pos[0] <= self.p_a[0] +self.radius) and (pos[1] <= self.p_a[1]+self.radius))  and ((pos[0] >= self.p_a[0] - self.radius) and (pos[1]>=self.p_a[1]-self.radius)):
 			return self.p_a
 		if ((pos[0] <= self.p_b[0] +self.radius) and (pos[1] <= self.p_b[1]+self.radius))  and ((pos[0] >= self.p_b[0] - self.radius) and (pos[1]>=self.p_b[1]-self.radius)):
@@ -119,14 +126,23 @@ class Game:
 		if ((pos[0] <= self.p_y[0] +self.radius) and (pos[1] <= self.p_y[1]+self.radius))  and ((pos[0] >= self.p_y[0] - self.radius) and (pos[1]>=self.p_y[1]-self.radius)):
 			return self.p_y
 
-	def init_pos(self):# initial positions of tigers
+	def init_pos(self):
+		"""
+			Initial positions of tigers.
+		"""
 		self.tiger_pos=[self.p_a,self.p_e, self.p_u, self.p_y]
 		self.goat_pos=[]
 		for t in self.tiger_pos:
 			self.draw_tiger(t)
 		pygame.display.flip()
 
-	def store_pos(self,_whose,_prev,_new):# saves changes in positions
+	def store_pos(self,_whose,_prev,_new):
+		"""
+			Draws and stored changes in the positions of the pieces.
+			Arguments:
+				_prev : previous position
+				_new : new position
+		"""
 		if _whose=="tiger":
 			self.draw_blank(_prev)
 			self.draw_tiger(_new)
@@ -139,7 +155,12 @@ class Game:
 			self.goat_pos.append(_new)
 		self.temp_pos=None # also called _prev
 
-	def board(self,_color):# creates board
+	def board(self,_color):
+		"""
+			Draws the board.
+			Arguments:
+				_color : color of the lines in the board. 
+		"""
 		self.screen=pygame.display.set_mode(size=(self.xaxis,self.yaxis))
 		self.screen.fill(self.black)
 		pygame.draw.line(self.screen,_color,(self.x,self.y),(self.xaxis-self.x,self.yaxis-self.y),4)
@@ -176,7 +197,10 @@ class Game:
 			self.final_screen()
 			pygame.display.update()
 
-	def turns(self,pos):# manage turns
+	def turns(self,pos):
+		"""
+			Manage turns of pieces
+		"""
 		_where=self.which_clicked(pos)
 		if _where == None:
 			print(f"invalid")
@@ -235,20 +259,34 @@ class Game:
 		if self.count_moves>=40:
 			self.goat_is_static=False
 
-	def draw_tiger(self,_center):# draws tiger
+	def draw_tiger(self,_center):
+		"""
+		Draws a tiger piece.
+		"""
 		pygame.draw.circle(self.screen, self.red, _center, self.radius)
 		pygame.draw.rect(self.screen,self.blue,self.border)
 		pygame.draw.rect(self.screen,self.blue,self.border2)
 
-	def draw_goat(self,_center):# draws goat
+	def draw_goat(self,_center):
+		"""
+		Draws a goat piece.
+		"""
 		pygame.draw.circle(self.screen, self.blue, _center, self.radius)
 		pygame.draw.rect(self.screen,self.red,self.border)
 		pygame.draw.rect(self.screen,self.red,self.border2)
 	
-	def draw_blank(self,_center):# removes a piece
+	def draw_blank(self,_center):
+		"""
+			Removes a piece from its position.
+		"""
 		pygame.draw.circle(self.screen,self.black,_center,self.radius)
 
-	def move_is_valid(self,_where):# checks the validity of the  move
+	def move_is_valid(self,_where):
+		"""
+			Checks the if the goat is being moved illegally and also changes selected tiger.
+			Arguments:
+				_where : 
+		"""
 		if _where in self.goat_pos and self.goat_is_static:
 			print(f"move not valid, Goat can't be moved")
 			return False
@@ -258,7 +296,13 @@ class Game:
 			return False
 		return True
 
-	def no_line_rule(self,_prev,_new):# stops pieces without lines
+	def no_line_rule(self,_prev,_new):
+		"""
+			Stops pieces where lines dont connect.
+			Arguments:
+				_prev : previous position
+				_new : new position
+		"""
 		if not _prev in self.free_pos:
 			print(f"restricted position")
 			_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
@@ -277,7 +321,13 @@ class Game:
 			print(f"Free position")
 			return True
 
-	def game_rules(self,_prev,_new):# the rules of the game
+	def game_rules(self,_prev,_new):
+		"""
+			The rules of the game.
+			Arguments:
+				_prev : previous position
+				_new : new position
+		"""
 		_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
 
 		if _diff[0]<0:# changes negative to positive int
@@ -291,6 +341,12 @@ class Game:
 			return True
 		
 	def tiger_eats(self,_prev,_new):
+		"""
+			Checks if the tiger's move is valid.
+			Arguments:
+				_prev : previous position
+				_new : new position
+		"""
 		_diff=[_prev[0]-_new[0],_prev[1]-_new[1]]
 		if _diff[0]<0:# changes negative to positive int
 			_diff[0]=int(str(_diff[0])[1:])
@@ -311,7 +367,10 @@ class Game:
 			print("False Alarm, Tiger got nothing")
 			return False
 
-	def goat_attacked(self):# deletes goat when eaten
+	def goat_attacked(self):
+		"""
+			Deletes goat when eaten.
+		"""
 		print("Goat corpse taken care of")
 		self.goat_pos.pop(self.goat_pos.index(self.goat_victim))
 		self.draw_blank(self.goat_victim)
@@ -319,12 +378,18 @@ class Game:
 		self.goat_death_count+=1
 
 	def goat_wins(self):
+		"""
+			checks if the goat have won.
+		"""
 		if len(self.goat_pos)<17:
 			return False
 		for _tigers in self.tiger_pos:
 			pass
 
-	def final_screen(self):# after game_over, shows the final positions 
+	def final_screen(self):
+		"""
+			After game_over, shows the final positions.
+		"""
 		for _goats in self.goat_pos:
 			self.draw_goat(_goats)
 		for _tigers in self.tiger_pos:
@@ -332,7 +397,10 @@ class Game:
 		pygame.draw.rect(self.screen,self.red,self.border)
 		pygame.draw.rect(self.screen,self.red,self.border2)
 
-	def game_is_over(self):# checks if game is over
+	def game_is_over(self):
+		"""
+			Checks if game is over.
+		"""
 		if (not self.goat_is_static and len(self.goat_pos)<=15) or self.goat_death_count>=5 :
 			print(f"tiger has won")
 			# textsurface = pygame.font.SysFont('Ariel', 40, True).render('TIGER WINS', False, self.white)
@@ -348,11 +416,16 @@ class Game:
 		return False
 
 	def play_again(self):
-		if self.cant_play_again:
-			return False
-		return True
+		"""
+			Checks if user clicked play_again.
+		"""
+		return self.cant_play_again
 
-	def playing(self):# actual game running
+
+	def playing(self):
+		"""
+			loops the game.
+		"""
 		wait_before_quit=False
 		while self.running:
 			for event in pygame.event.get():
